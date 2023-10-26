@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const connection = require('./db/connection');
 const employeeOps = require('./lib/Employee'); 
 const roleOps = require('./lib/Role');  
-const departmentOps = require('./lib/Department')
+const departmentOps = require('./lib/Department');
 
 async function init() {
     console.log("About to start inquirer...");
@@ -27,7 +27,7 @@ async function init() {
             const departments = await departmentOps.getAllDepartments();
             console.table(departments);
             break;
-        
+
         case 'View all roles':
             const roles = await roleOps.getAllRoles();
             console.table(roles);
@@ -71,25 +71,62 @@ async function init() {
             break;
 
         case 'Add an employee':
-           
+            const allRolesForEmployee = await roleOps.getAllRoles();
+            const roleChoicesForEmployee = allRolesForEmployee.map(role => ({
+                name: role.title,
+                value: role.id
+            }));
+            
+            const potentialManagers = await employeeOps.getAllEmployees();
+            const managerChoices = potentialManagers.map(manager => ({
+                name: `${manager.first_name} ${manager.last_name}`,
+                value: manager.id
+            }));
+
+            managerChoices.push({ name: 'None', value: null });
+            
+            const employeeData = await inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'first_name',
+                    message: 'Enter the first name of the employee:'
+                },
+                {
+                    type: 'input',
+                    name: 'last_name',
+                    message: 'Enter the last name of the employee:'
+                },
+                {
+                    type: 'list',
+                    name: 'role_id',
+                    message: 'Select the role for the employee:',
+                    choices: roleChoicesForEmployee
+                },
+                {
+                    type: 'list',
+                    name: 'manager_id',
+                    message: 'Select the manager for the employee:',
+                    choices: managerChoices
+                }
+            ]);
+
+            await employeeOps.addEmployee(employeeData);
+            console.log('Employee added successfully!');
             break;
 
         case 'Update an employee role':
-            // Get a list of all employees
             const allEmployees = await employeeOps.getAllEmployees();
             const employeeChoices = allEmployees.map(employee => ({
                 name: `${employee.first_name} ${employee.last_name}`,
                 value: employee.id
             }));
 
-            // Get a list of all roles
             const allRoles = await roleOps.getAllRoles();
             const roleChoices = allRoles.map(role => ({
                 name: role.title,
                 value: role.id
             }));
 
-            // Prompt user to choose an employee and a new role
             const { employee_id, new_role_id } = await inquirer.prompt([
                 {
                     type: 'list',
@@ -105,7 +142,6 @@ async function init() {
                 }
             ]);
 
-            // Update the employee's role in the database
             await employeeOps.updateEmployeeRole({ employee_id, new_role_id });
             console.log('Employee role updated successfully!');
             break;
