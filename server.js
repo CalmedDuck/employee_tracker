@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const connection = require('./db/connection');
-const employeeOps = require('./lib/Employee');  // Adjusted the path and removed .js
-const roleOps = require('./lib/Role');  // Adjusted the path and removed .js
+const employeeOps = require('./lib/Employee'); 
+const roleOps = require('./lib/Role');  
 const departmentOps = require('./lib/Department')
 
 async function init() {
@@ -71,7 +71,7 @@ async function init() {
             break;
 
         case 'Add an employee':
-            // Assuming you have added the logic for adding an employee
+           
             break;
 
         case 'Update an employee role':
