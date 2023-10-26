@@ -15,6 +15,8 @@ A command line application that allows users to manage and view information abou
 
 ## VIDEO LINK
 
+https://drive.google.com/file/d/1QgDKmbmBOSbqplHaK3zVesKFT5FFFwqj/view
+
 ## Installation
 
 Clone the repository to your local machine and install the necessary npm packages. npm install.
